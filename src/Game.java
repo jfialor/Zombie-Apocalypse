@@ -20,7 +20,7 @@ public class Game implements Runnable {
 
         // Top-level frame in which game components live
 		  // Be sure to change "TOP LEVEL FRAME" to the name of your game
-        final JFrame frame = new JFrame("TOP LEVEL FRAME");
+        final JFrame frame = new JFrame("Zombie Apocalypse");
         frame.setLocation(300,300);
 
 		  // Status panel
@@ -49,6 +49,22 @@ public class Game implements Runnable {
                 }
             });
         control_panel.add(reset);
+        
+        final JButton pause = new JButton("Pause");
+        pause.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    court.pause();
+                }
+            });
+        control_panel.add(pause);
+        
+        final JButton instructions = new JButton("Instructions");
+        instructions.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                	court.instructions();
+                }
+            });
+        control_panel.add(instructions);
 
         // Put the frame on the screen
         frame.pack();

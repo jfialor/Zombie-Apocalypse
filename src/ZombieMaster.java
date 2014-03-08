@@ -1,20 +1,16 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 
-public class Zombie extends GameObj {
-
-	 public static final String img_file = "images/zombiemain_03.png";
-	 public static final String img_wound_file = "images/wound.png";
-	 public static final String img_wounder_file = "images/wound2.png";
+public class ZombieMaster extends Zombie {
+	
+	 public static final String img_file = "images/zombie_red_03.png";
 	 public static int SIZE = 40;
 	 public final int INIT_POS_X = (int) (Math.random() * 300);  
 	 public final int INIT_POS_Y = (int) (Math.random() * 300); 
@@ -22,18 +18,15 @@ public class Zombie extends GameObj {
 	 public static final int INIT_VEL_Y = 3;
 	 public static final int jump = 0; //best at 50
 	 public boolean stillContact;
-	 public int Life;
-	 public boolean dead;
 	 
 	 private static BufferedImage img;
-	 private static BufferedImage img_wound;
-	 private static BufferedImage img_wounder;
 	 
-	 public Zombie(int posx, int posy,
+	 public ZombieMaster(int posx, int posy,
 			 int courtWidth, int courtHeight, int absvel, int maxlife) {
-		 super(absvel,(int) (Math.random() * courtWidth), 
-					(int) (Math.random() * courtHeight), 
-					SIZE, SIZE, courtWidth, courtHeight);
+		 super(posx, posy, courtWidth, 
+					courtHeight, absvel, maxlife);
+		 width = SIZE;
+		 height = SIZE;
 		try {
 			if (img == null) {
 				img = ImageIO.read(new File(img_file));
@@ -42,21 +35,7 @@ public class Zombie extends GameObj {
 			System.out.println("Internal Error:" + e.getMessage());
 		}
 		
-		try {
-			if (img_wound == null) {
-				img_wound = ImageIO.read(new File(img_wound_file));
-			}
-		} catch (IOException e) {
-			System.out.println("Internal Error:" + e.getMessage());
-		}
 		
-		try {
-			if (img_wounder == null) {
-				img_wounder = ImageIO.read(new File(img_wounder_file));
-			}
-		} catch (IOException e) {
-			System.out.println("Internal Error:" + e.getMessage());
-		}
 		this.Life = maxlife;
 	}
 
@@ -90,8 +69,7 @@ public class Zombie extends GameObj {
 	   BufferedImage temp;
 	   switch (Life){
 	   case 3: temp = img; break;
-	   case 2: temp = img_wound; break;
-	   case 1: temp = img_wounder; break;
+	   //for additional image options
 	   default: temp = img;
 	   
 	   }
@@ -124,6 +102,7 @@ public class Zombie extends GameObj {
 	   int userx = user.getx();
 	   int usery = user.gety();
 	   Direction d = Direction.UP;
+
 
 	   if (usery < pos_y && userx == pos_x ){
 		   d = Direction.UP;
@@ -165,7 +144,7 @@ public class Zombie extends GameObj {
 		   stillContact = false;
 		   return;
 	   }
-	   
+
 	   if (user != null && facing != null && withinDistance(user, facing)
 			   && !dead){
 		   user.wound();
@@ -181,9 +160,10 @@ public class Zombie extends GameObj {
 	   for (int i = 0; i < zombies.length; i++) {
 		   
 		   if (!this.equals(zombies[i]) && zombies[i] != null && 
-				   withinDistance(zombies[i], d) && !zombies[i].dead){
+			   withinDistance(zombies[i], d) && !zombies[i].dead){
 			   return true;
 		   }
+
 	   }
 	   return false;
    }
@@ -223,6 +203,5 @@ public class Zombie extends GameObj {
 	}
    }
    
-   
-   
+
 }

@@ -31,6 +31,7 @@ public class GameObj {
 	/** Velocity: number of pixels to move every time move() is called */
 	public int v_x;
 	public int v_y;
+	public int absvel;
 
 	/** Upper bounds of the area in which the object can be positioned.  
 	 *    Maximum permissible x, y positions for the upper-left 
@@ -38,6 +39,8 @@ public class GameObj {
 	 */
 	public int max_x;
 	public int max_y;
+	
+	public Direction facing;
 
 	/**
 	 * Constructor
@@ -57,6 +60,20 @@ public class GameObj {
 		this.max_y = court_height - height;
 
 	}
+	public GameObj(int vel, int pos_x, int pos_y, 
+			int width, int height, int court_width, int court_height){
+			this.absvel = vel;
+			this.pos_x = pos_x;
+			this.pos_y = pos_y;
+			this.width = width;
+			this.height = height;
+			
+			// take the width and height into account when setting the 
+			// bounds for the upper left corner of the object.
+			this.max_x = court_width - width;
+			this.max_y = court_height - height;
+
+		}
 
 
 	/**
@@ -66,9 +83,42 @@ public class GameObj {
 	public void move(){
 		pos_x += v_x;
 		pos_y += v_y;
-
+		
 		clip();
 	}
+	
+	public void move(Direction d) {
+		switch (d) {
+		case UP: pos_y -= absvel; 
+		 		 break;
+		case DOWN: pos_y += absvel; 
+		 		   break;
+		case LEFT: pos_x -= absvel; 
+		 		   break;
+		case RIGHT: pos_x += absvel; 
+		 break;
+		case UP_RIGHT: pos_y -= absvel;
+					   pos_x += absvel;
+					   break;
+		case UP_LEFT: pos_y -= absvel;
+					  pos_x -= absvel;
+		 			  break;
+		case DOWN_RIGHT: pos_y += absvel; 
+						 pos_x += absvel;
+		 				 break;
+		case DOWN_LEFT: pos_y += absvel;
+						pos_x -= absvel;
+		 				break;
+		}
+		this.facing = d;
+		clip();
+	}
+	
+	public void setDirection(Direction d) {
+		facing = d;
+	}
+
+
 
 	/**
 	 * Prevents the object from going outside of the bounds of the area 
@@ -122,6 +172,87 @@ public class GameObj {
 				&& next_y + height >= next_obj_y
 				&& next_obj_x + obj.width >= next_x 
 				&& next_obj_y + obj.height >= next_y);
+	}
+	
+	//mainly for game objects not to hit each other
+	public boolean withinDistance(GameObj obj, Direction d){
+		int nextx = pos_x;
+		int nexty = pos_y;
+		
+		switch (d) {
+		case UP: nexty -= absvel; 
+		 		 break;
+		case DOWN: nexty += absvel; 
+		 		   break;
+		case LEFT: nextx -= absvel; 
+		 		   break;
+		case RIGHT: nextx += absvel; 
+		 break;
+		case UP_RIGHT: nexty -= absvel;
+					   nextx += absvel;
+					   break;
+		case UP_LEFT: nexty -= absvel;
+					  nextx -= absvel;
+		 			  break;
+		case DOWN_RIGHT: nexty += absvel; 
+						 nextx += absvel;
+		 				 break;
+		case DOWN_LEFT: nexty += absvel;
+						nextx -= absvel;
+		 				break;
+		}
+		
+		int next_obj_x = obj.pos_x;
+		int next_obj_y = obj.pos_y;
+		return (nextx + width >= next_obj_x
+				&& nexty + height >= next_obj_y
+				&& next_obj_x + obj.width >= nextx 
+				&& next_obj_y + obj.height >= nexty);
+		
+	}
+
+	public Direction opposite(Direction d) {
+		Direction newd = null;
+		switch (d) {
+		case UP: newd = Direction.DOWN; 
+		 		 break;
+		case DOWN: newd = Direction.UP; 
+		 		   break;
+		case LEFT: newd = Direction.RIGHT;  
+		 		   break;
+		case RIGHT: newd = Direction.LEFT;  
+		 			break;
+		case UP_RIGHT: newd = Direction.DOWN_LEFT; 
+					   break;
+		case UP_LEFT: newd = Direction.DOWN_RIGHT; 	
+		 			  break;
+		case DOWN_RIGHT: newd = Direction.UP_LEFT; 
+		 				 break;
+		case DOWN_LEFT: newd = Direction.UP_RIGHT; 
+		 				break;
+		}
+		return newd;
+	}
+	
+	public void beHit (Direction ofHit, int jump){
+		switch (ofHit){
+	    case UP: pos_y -= jump; break;
+	    case UP_RIGHT: pos_y -= jump; 
+	    				pos_x += jump;
+	    				break;
+	    case RIGHT: pos_x += jump; break;
+	    case DOWN_RIGHT: pos_x += jump; 
+	    				 pos_y += jump;
+	    				 break;
+	    case DOWN: pos_y += jump; break;
+	    case DOWN_LEFT: pos_y += jump;
+	    				pos_x -= jump;
+	    				break;
+	    case LEFT: pos_x -= jump; break;
+	    case UP_LEFT: pos_x -= jump; 
+	    			  pos_y -= jump;
+	    			  break;
+	    }
 	}
 
 	
@@ -187,6 +318,40 @@ public class GameObj {
 			return null;
 		}
 
+	}
+	public Direction hitObj2(GameObj other, Direction d) {
+
+		if (this.withinDistance(other, d)) {
+			double dx = other.pos_x + other.width /2 - (pos_x + width /2);
+			double dy = other.pos_y + other.height/2 - (pos_y + height/2);
+
+			double theta = Math.atan2(dy, dx);
+			double diagTheta = Math.atan2(height, width);
+
+			if ( -diagTheta <= theta && theta <= diagTheta ) {
+				return Direction.RIGHT;
+			} else if ( diagTheta <= theta 
+					&& theta <= Math.PI - diagTheta ) {
+				return Direction.DOWN;
+			} else if ( Math.PI - diagTheta <= theta 
+					|| theta <= diagTheta - Math.PI ) {
+				return Direction.LEFT;
+			} else {
+				return Direction.UP;
+			}
+
+		} else {
+			return null;
+		}
+
+	}
+	
+	
+	public int getx(){
+		return pos_x;
+	}
+	public int gety(){
+		return pos_y;
 	}
 	
 	/**
