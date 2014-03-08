@@ -7,7 +7,8 @@ I hope you enjoy it!
 
 Sedem. 2014. 
 
-run the following in the src folder
+
 <pre>
 $ javac *.java && java Game
+#in src
 </pre>
