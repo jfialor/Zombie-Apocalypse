@@ -5,7 +5,7 @@ The number of zombies and difficulty in defeating them increases as you progress
 I do not own the copyrights to the images used for the sprites. However I implemented all the logic and code myself.
 I hope you enjoy it!
 
-Sedem. 2014. 
+Sedem. 2013. 
 
 
 <pre>
