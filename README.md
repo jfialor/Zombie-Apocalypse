@@ -7,7 +7,8 @@ I hope you enjoy it!
 
 Sedem. 2014. 
 
-!!in src
+
 <pre>
+$ cd src
 $ javac *.java && java Game
 </pre>
