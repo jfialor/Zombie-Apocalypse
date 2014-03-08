@@ -7,8 +7,7 @@ I hope you enjoy it!
 
 Sedem. 2014. 
 
-
+#in src
 <pre>
 $ javac *.java && java Game
-#in src
 </pre>
