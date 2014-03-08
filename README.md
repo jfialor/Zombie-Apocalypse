@@ -6,3 +6,5 @@ I do not own the copyrights to the images used for the sprites. However I implem
 I hope you enjoy it!
 
 Sedem. 2014.
+
+$ javac *.java && java Game
